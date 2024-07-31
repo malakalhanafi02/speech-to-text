@@ -1,1 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Text Recognition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Speech to Text Recognition</h1>
+    <div class="control-panel">
+        <textarea id="transcript" placeholder="Speech will be converted to text here..."></textarea>
+    </div>
 
+    <script>
+        function startRecognition() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('transcript').value = transcript;
+
+                // Send the text to the server
+                fetch('store_text.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'command=' + encodeURIComponent(transcript)
+                })
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Error occurred in recognition: ' + event.error);
+            };
+
+            recognition.onend = function() {
+                // Restart the recognition
+                startRecognition();
+            };
+
+            recognition.start();
+        }
+
+        // Start the recognition loop as soon as the page loads
+        window.onload = function() {
+            startRecognition();
+        };
+    </script>
+</body>
+</html>
