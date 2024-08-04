@@ -1,4 +1,4 @@
-# 👄 Speech to Text Recognition 🤖
+# 👄 Speech to Text Recognition using Web Speech API 🤖
 
 <img width="1679" alt="UI" src="https://github.com/user-attachments/assets/7e5771bb-29c9-46de-8f37-20613eafdaef">
 
